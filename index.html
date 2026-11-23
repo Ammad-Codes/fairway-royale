@@ -11,8 +11,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Ccircle cx='24' cy='24' r='22' fill='%2306140d' stroke='%23c9a45c' stroke-width='2'/%3E%3Cpath d='M16 32V16l8 8 8-8v16' fill='none' stroke='%23c9a45c' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
-  <link rel="stylesheet" href="style.css?v=1" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Ccircle cx='24' cy='24' r='22' fill='%230a1410' stroke='%23d4af37' stroke-width='2'/%3E%3Cpath d='M16 32V16l8 8 8-8v16' fill='none' stroke='%23d4af37' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="style.css?v=3" />
 </head>
 
 <body class="is-loading">
@@ -35,6 +35,7 @@
   <!-- Custom luxury cursor + scroll progress + extras -->
   <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
   <div class="cursor-ring" id="cursorRing" aria-hidden="true"><span class="cursor-label" id="cursorLabel"></span></div>
+  <div class="cursor-trail" id="cursorTrail" aria-hidden="true"></div>
   <div class="scroll-line" aria-hidden="true"><span class="scroll-ball" id="scrollBall"></span></div>
   <div class="grain" aria-hidden="true"></div>
   <span class="visit-ball" id="visitBall" aria-hidden="true"></span>
@@ -76,6 +77,7 @@
       <a href="#course" data-bg="course" style="--i:1">The Course</a>
       <a href="#experiences" data-bg="green" style="--i:2">Experiences</a>
       <a href="#membership" data-bg="hero" style="--i:3">Membership</a>
+      <a href="#lounge" data-bg="green" style="--i:3">The Lounge</a>
       <a href="#shop" data-bg="course" style="--i:4">Pro Shop</a>
       <a href="#events" data-bg="green" style="--i:5">Events</a>
       <a href="#gallery" data-bg="hero" style="--i:6">Gallery</a>
@@ -88,6 +90,10 @@
     <!-- ============ 3. HERO ============ -->
     <section class="hero" id="hero">
       <div class="hero__bg" aria-hidden="true"></div>
+      <video class="hero__video" id="heroVideo" autoplay muted loop playsinline webkit-playsinline preload="auto" poster="assets/hero-poster.jpg" aria-hidden="true">
+        <source src="assets/hero.webm" type="video/webm" />
+        <source src="assets/hero.mp4" type="video/mp4" />
+      </video>
       <div class="mist" aria-hidden="true"></div>
       <div class="mist mist--2" aria-hidden="true"></div>
       <div class="particles" id="particles" aria-hidden="true"></div>
@@ -95,7 +101,7 @@
 
       <div class="container hero__content">
         <p class="hero__eyebrow eyebrow">Private Members' Club · Est. 1928</p>
-        <h1 class="hero__title">
+        <h1 class="hero__title shine-title">
           <span class="line"><span class="mask">Where the Fairway</span></span>
           <span class="line"><span class="mask gold-italic">Meets Royalty</span></span>
         </h1>
@@ -129,8 +135,9 @@
           <div class="heritage__copy">
             <header class="section-head">
               <p class="eyebrow" data-reveal="fade-up">Our Heritage</p>
-              <h2 class="section-title" data-split>A Century of Quiet Grandeur</h2>
-            </header>
+              <h2 class="section-title shine-title" data-split>A Century of Quiet Grandeur</h2>
+                      <div class="gold-rule" aria-hidden="true"></div>
+        </header>
             <p class="lead" data-reveal="fade-up">Founded in 1928 beside Lahore's green belt, FAIRWAY ROYALE remains a members-only club where championship golf, hospitality and discretion are held to the same standard.</p>
             <p class="muted" data-reveal="fade-up">Today the club stands in DHA Phase 9, Lahore, Pakistan — still private, still exacting, and still devoted to the game as it should be played.</p>
             <div class="stats" data-reveal="fade-up">
@@ -140,8 +147,8 @@
               <div class="stat"><span class="stat__num" data-count="400">0</span><span class="muted">Members</span></div>
             </div>
           </div>
-          <div class="heritage__media" data-reveal="fade-left">
-            <img src="https://images.unsplash.com/photo-1592919505780-303950717480?auto=format&amp;fit=crop&amp;w=1400&amp;q=80" alt="Morning light on a championship fairway" width="1400" height="900" />
+          <div class="heritage__media lux-frame clip-reveal" data-reveal="fade-left" data-parallax="8">
+            <img class="img-lux" src="https://images.unsplash.com/photo-1592919505780-303950717480?auto=format&amp;fit=crop&amp;w=1400&amp;q=80" alt="Morning light on a championship fairway" width="1400" height="900" />
           </div>
         </div>
       </div>
@@ -152,15 +159,16 @@
       <div class="container">
         <header class="section-head">
           <p class="eyebrow" data-reveal="fade-up">The Course</p>
-          <h2 class="section-title" data-split>Eighteen Holes, One Standard</h2>
+          <h2 class="section-title shine-title" data-split>Eighteen Holes, One Standard</h2>
           <p class="lead" data-reveal="fade-up">Walk the layout hole by hole. Each green is kept with championship care and framed by the gardens of DHA Phase 9.</p>
+                  <div class="gold-rule" aria-hidden="true"></div>
         </header>
 
         <div class="course-explorer" data-reveal="fade-up">
           <div class="hole-nav" id="holeNav" role="tablist" aria-label="Select a hole"></div>
           <article class="hole-panel glass" id="holePanel">
             <div class="hole-panel__media">
-              <img id="holeImage" src="https://images.unsplash.com/photo-1592919505780-303950717480?auto=format&amp;fit=crop&amp;w=1400&amp;q=80" alt="Fairway view of the selected hole" width="1400" height="800" />
+              <img class="img-lux" id="holeImage" src="https://images.unsplash.com/photo-1592919505780-303950717480?auto=format&amp;fit=crop&amp;w=1400&amp;q=80" alt="Fairway view of the selected hole" width="1400" height="800" />
             </div>
             <div class="hole-panel__copy">
               <p class="eyebrow" id="holeNum">Hole 1</p>
@@ -179,11 +187,11 @@
         <div class="exp-sticky">
           <header class="section-head container exp-head">
             <p class="eyebrow">Signature Experiences</p>
-            <h2 class="section-title" data-split>The Art of Belonging</h2>
+            <h2 class="section-title shine-title" data-split>The Art of Belonging</h2>
           </header>
           <div class="exp-track" id="expTrack">
             <article class="exp-card">
-              <img src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&amp;fit=crop&amp;w=1400&amp;q=80" alt="A perfectly kept putting green" />
+              <img class="img-lux" src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&amp;fit=crop&amp;w=1400&amp;q=80" alt="A perfectly kept putting green" />
               <div class="exp-card__body">
                 <p class="eyebrow">01</p>
                 <h3>Championship Golf</h3>
@@ -191,7 +199,7 @@
               </div>
             </article>
             <article class="exp-card">
-              <img src="https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&amp;fit=crop&amp;w=1400&amp;q=80" alt="The course stretching toward the horizon" />
+              <img class="img-lux" src="https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&amp;fit=crop&amp;w=1400&amp;q=80" alt="The course stretching toward the horizon" />
               <div class="exp-card__body">
                 <p class="eyebrow">02</p>
                 <h3>The Clubhouse Terrace</h3>
@@ -199,7 +207,7 @@
               </div>
             </article>
             <article class="exp-card">
-              <img src="https://images.unsplash.com/photo-1592919505780-303950717480?auto=format&amp;fit=crop&amp;w=1400&amp;q=80" alt="A golfer walking the fairway" />
+              <img class="img-lux" src="https://images.unsplash.com/photo-1592919505780-303950717480?auto=format&amp;fit=crop&amp;w=1400&amp;q=80" alt="A golfer walking the fairway" />
               <div class="exp-card__body">
                 <p class="eyebrow">03</p>
                 <h3>Caddie Tradition</h3>
@@ -207,7 +215,7 @@
               </div>
             </article>
             <article class="exp-card">
-              <img src="https://images.unsplash.com/photo-1590588120233-079870d855ee?auto=format&amp;fit=crop&amp;w=1400&amp;q=80" alt="Lush grounds around the resort" />
+              <img class="img-lux" src="https://images.unsplash.com/photo-1590588120233-079870d855ee?auto=format&amp;fit=crop&amp;w=1400&amp;q=80" alt="Lush grounds around the resort" />
               <div class="exp-card__body">
                 <p class="eyebrow">04</p>
                 <h3>Resort Suites</h3>
@@ -220,12 +228,13 @@
     </section>
 
     <!-- ============ 8. BOOK A TEE TIME ============ -->
-    <section class="section booking" id="booking">
+    <section class="section booking cta-sparkle" id="booking">
       <div class="container">
         <header class="section-head">
           <p class="eyebrow" data-reveal="fade-up">Reservations</p>
-          <h2 class="section-title" data-split>Book a Tee Time</h2>
+          <h2 class="section-title shine-title" data-split>Book a Tee Time</h2>
           <p class="lead" data-reveal="fade-up">Choose a date, a time and the number of players. Members and accompanied guests are welcome.</p>
+                  <div class="gold-rule" aria-hidden="true"></div>
         </header>
 
         <div class="booking__grid">
@@ -285,8 +294,9 @@
       <div class="container">
         <header class="section-head">
           <p class="eyebrow" data-reveal="fade-up">Swing Analyzer</p>
-          <h2 class="section-title" data-split>Estimate Your Handicap</h2>
+          <h2 class="section-title shine-title" data-split>Estimate Your Handicap</h2>
           <p class="lead" data-reveal="fade-up">Enter at least three recent scores. We will estimate your handicap and your level.</p>
+                  <div class="gold-rule" aria-hidden="true"></div>
         </header>
 
         <div class="hcp-wrap">
@@ -319,12 +329,13 @@
     </section>
 
     <!-- ============ 10. VIP MEMBERSHIP — THE ROYALE CIRCLE ============ -->
-    <section class="section membership" id="membership">
+    <section class="section membership cta-sparkle" id="membership">
       <div class="container">
         <header class="section-head">
           <p class="eyebrow" data-reveal="fade-up">The Royale Circle</p>
-          <h2 class="section-title" data-split>Membership, Reimagined</h2>
+          <h2 class="section-title shine-title" data-split>Membership, Reimagined</h2>
           <p class="lead" data-reveal="fade-up">Three tiers, one standard of excellence. Choose the membership that suits the way you play.</p>
+                  <div class="gold-rule" aria-hidden="true"></div>
         </header>
 
         <div class="billing" data-reveal="fade-up">
@@ -374,42 +385,78 @@
       </div>
     </section>
 
+
+    <!-- ============ 10b. MEMBERS LOUNGE ============ -->
+    <section class="section lounge cta-sparkle" id="lounge">
+      <div class="container">
+        <header class="section-head">
+          <p class="eyebrow" data-reveal="fade-up">Members Lounge</p>
+          <h2 class="section-title shine-title" data-split>The Quiet Hours</h2>
+          <div class="gold-rule" aria-hidden="true"></div>
+          <p class="lead" data-reveal="fade-up">A private room above the eighteenth in DHA Phase 9, Lahore, for members who prefer their conversation as considered as their golf.</p>
+        </header>
+        <div class="lounge-grid">
+          <div class="lounge-copy glass" data-reveal="fade-right">
+            <p>Firelight, a small library, and a terrace that looks back across the finishing hole. Evening menus are written daily; jackets are preferred after dusk.</p>
+            <p class="muted">Access is reserved for Gold and Royale members, and for accompanied Green members on Friday evenings.</p>
+            <div class="lounge-media lux-frame clip-reveal" data-parallax="6">
+              <img class="img-lux" src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&amp;fit=crop&amp;w=1400&amp;q=80" alt="Quiet light on the practice green, seen from the clubhouse" width="1400" height="800" />
+            </div>
+          </div>
+          <aside class="conditions glass" data-reveal="fade-left" aria-label="Example course conditions">
+            <p class="eyebrow">DHA Phase 9, Lahore</p>
+            <h3>Course Conditions</h3>
+            <p class="conditions-note">Example conditions — static preview, not live weather</p>
+            <div class="cond-grid">
+              <div class="cond-item"><strong>22°C</strong><span>Air temperature</span></div>
+              <div class="cond-item"><strong>NW 8 km/h</strong><span>Light breeze</span></div>
+              <div class="cond-item"><strong>Firm, quick</strong><span>Green speed</span></div>
+              <div class="cond-item"><strong>Dry</strong><span>Fairways</span></div>
+              <div class="cond-item"><strong>Open</strong><span>Course status</span></div>
+              <div class="cond-item"><strong>6:42 · 17:08</strong><span>First light · last light</span></div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
     <!-- ============ 11. PRO SHOP ============ -->
     <section class="section section--alt shop" id="shop">
       <div class="container">
         <header class="section-head">
           <p class="eyebrow" data-reveal="fade-up">The Pro Shop</p>
-          <h2 class="section-title" data-split>Fitted for the Course</h2>
+          <h2 class="section-title shine-title" data-split>Fitted for the Course</h2>
           <p class="lead" data-reveal="fade-up">A considered edit of clubs, apparel and accessories, chosen for the Lahore season.</p>
+                  <div class="gold-rule" aria-hidden="true"></div>
         </header>
 
         <div class="shop-grid">
-          <article class="product glass" data-reveal="fade-up">
-            <img src="https://images.unsplash.com/photo-1593111774240-d529f12cf4bb?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="Premium golf clubs" />
+          <article class="product glass lux-frame" data-reveal="fade-up">
+            <img class="img-lux" src="https://images.unsplash.com/photo-1593111774240-d529f12cf4bb?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="Premium golf clubs" />
             <div class="product__body">
               <h3>Staff Bag — Forest</h3>
               <p class="muted">$1,280</p>
               <button class="btn btn--gold btn--sm magnetic add-btn" type="button" data-name="Staff Bag — Forest" data-price="1280">Add to bag</button>
             </div>
           </article>
-          <article class="product glass" data-reveal="fade-up">
-            <img src="https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="Golf apparel and kit" />
+          <article class="product glass lux-frame" data-reveal="fade-up">
+            <img class="img-lux" src="https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="Golf apparel and kit" />
             <div class="product__body">
               <h3>Tour Polo — Ivory</h3>
               <p class="muted">$145</p>
               <button class="btn btn--gold btn--sm magnetic add-btn" type="button" data-name="Tour Polo — Ivory" data-price="145">Add to bag</button>
             </div>
           </article>
-          <article class="product glass" data-reveal="fade-up">
-            <img src="https://images.unsplash.com/photo-1592919505780-303950717480?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="Golf course lifestyle" />
+          <article class="product glass lux-frame" data-reveal="fade-up">
+            <img class="img-lux" src="https://images.unsplash.com/photo-1592919505780-303950717480?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="Golf course lifestyle" />
             <div class="product__body">
               <h3>Championship Cap</h3>
               <p class="muted">$68</p>
               <button class="btn btn--gold btn--sm magnetic add-btn" type="button" data-name="Championship Cap" data-price="68">Add to bag</button>
             </div>
           </article>
-          <article class="product glass" data-reveal="fade-up">
-            <img src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="Putting green at dusk" />
+          <article class="product glass lux-frame" data-reveal="fade-up">
+            <img class="img-lux" src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="Putting green at dusk" />
             <div class="product__body">
               <h3>Practice Dozen</h3>
               <p class="muted">$54</p>
@@ -426,8 +473,9 @@
       <div class="container">
         <header class="section-head">
           <p class="eyebrow" data-reveal="fade-up">The Calendar</p>
-          <h2 class="section-title" data-split>Club Events</h2>
+          <h2 class="section-title shine-title" data-split>Club Events</h2>
           <p class="lead" data-reveal="fade-up">Tournaments, dinners and quiet gatherings at the clubhouse in DHA Phase 9.</p>
+                  <div class="gold-rule" aria-hidden="true"></div>
         </header>
         <div class="event-list">
           <article class="event glass" data-reveal="fade-up">
@@ -460,26 +508,27 @@
       <div class="container">
         <header class="section-head">
           <p class="eyebrow" data-reveal="fade-up">Gallery</p>
-          <h2 class="section-title" data-split>The Grounds, in Light</h2>
+          <h2 class="section-title shine-title" data-split>The Grounds, in Light</h2>
+                  <div class="gold-rule" aria-hidden="true"></div>
         </header>
         <div class="gallery-grid" id="galleryGrid">
           <button class="g-item" type="button" data-full="https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&amp;fit=crop&amp;w=1800&amp;q=80" data-caption="The opening fairway at first light">
-            <img src="https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="The opening fairway at first light" />
+            <img class="img-lux" src="https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="The opening fairway at first light" />
           </button>
           <button class="g-item" type="button" data-full="https://images.unsplash.com/photo-1592919505780-303950717480?auto=format&amp;fit=crop&amp;w=1800&amp;q=80" data-caption="A quiet approach into a guarded green">
-            <img src="https://images.unsplash.com/photo-1592919505780-303950717480?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="A quiet approach into a guarded green" />
+            <img class="img-lux" src="https://images.unsplash.com/photo-1592919505780-303950717480?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="A quiet approach into a guarded green" />
           </button>
           <button class="g-item" type="button" data-full="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&amp;fit=crop&amp;w=1800&amp;q=80" data-caption="Morning dew on the practice green">
-            <img src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="Morning dew on the practice green" />
+            <img class="img-lux" src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="Morning dew on the practice green" />
           </button>
           <button class="g-item" type="button" data-full="https://images.unsplash.com/photo-1592919505780-303950717480?auto=format&amp;fit=crop&amp;w=1800&amp;q=80" data-caption="Walking the fairway in still air">
-            <img src="https://images.unsplash.com/photo-1592919505780-303950717480?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="Walking the fairway in still air" />
+            <img class="img-lux" src="https://images.unsplash.com/photo-1592919505780-303950717480?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="Walking the fairway in still air" />
           </button>
           <button class="g-item" type="button" data-full="https://images.unsplash.com/photo-1590588120233-079870d855ee?auto=format&amp;fit=crop&amp;w=1800&amp;q=80" data-caption="Gardens at the edge of the course">
-            <img src="https://images.unsplash.com/photo-1590588120233-079870d855ee?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="Gardens at the edge of the course" />
+            <img class="img-lux" src="https://images.unsplash.com/photo-1590588120233-079870d855ee?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="Gardens at the edge of the course" />
           </button>
           <button class="g-item" type="button" data-full="https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&amp;fit=crop&amp;w=1800&amp;q=80" data-caption="Clubhouse evenings after the round">
-            <img src="https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="Clubhouse evenings after the round" />
+            <img class="img-lux" src="https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&amp;fit=crop&amp;w=900&amp;q=80" alt="Clubhouse evenings after the round" />
           </button>
         </div>
       </div>
@@ -500,7 +549,8 @@
       <div class="container">
         <header class="section-head">
           <p class="eyebrow" data-reveal="fade-up">Members' Voices</p>
-          <h2 class="section-title" data-split>Letters from the Circle</h2>
+          <h2 class="section-title shine-title" data-split>Letters from the Circle</h2>
+                  <div class="gold-rule" aria-hidden="true"></div>
         </header>
         <div class="review-slider" data-reveal="fade-up">
           <button class="icon-btn" id="reviewPrev" type="button" aria-label="Previous review">←</button>
@@ -531,12 +581,13 @@
     </section>
 
     <!-- ============ 15. CONTACT ============ -->
-    <section class="section section--alt contact" id="contact">
+    <section class="section section--alt contact cta-sparkle" id="contact">
       <div class="container">
         <header class="section-head">
           <p class="eyebrow" data-reveal="fade-up">The Clubhouse</p>
-          <h2 class="section-title" data-split>Visit Us in Lahore</h2>
+          <h2 class="section-title shine-title" data-split>Visit Us in Lahore</h2>
           <p class="lead" data-reveal="fade-up">Write to the concierge, or come to the gates in DHA Phase 9. We will be expecting you.</p>
+                  <div class="gold-rule" aria-hidden="true"></div>
         </header>
 
         <div class="contact-grid">
@@ -603,6 +654,7 @@
         <a href="#course">The Course</a>
         <a href="#experiences">Experiences</a>
         <a href="#membership">Membership</a>
+        <a href="#lounge">The Lounge</a>
         <a href="#shop">Pro Shop</a>
         <a href="#events">Events</a>
         <a href="#gallery">Gallery</a>
@@ -629,6 +681,10 @@
     <p class="copyright">© <span id="year">2026</span> FAIRWAY ROYALE. All rights reserved. DHA Phase 9, Lahore, Pakistan.</p>
   </footer>
 
+
+  <!-- Section progress dots -->
+  <nav class="section-dots" id="sectionDots" aria-label="On this page"></nav>
+
   <!-- Back to top with progress ring -->
   <button class="back-to-top" id="backToTop" type="button" aria-label="Back to top">
     <svg viewBox="0 0 48 48" aria-hidden="true">
@@ -641,6 +697,6 @@
   <!-- Toasts -->
   <div class="toasts" id="toasts" aria-live="polite"></div>
 
-  <script src="script.js?v=1"></script>
+  <script src="script.js?v=3"></script>
 </body>
 </html>
