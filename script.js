@@ -62,8 +62,10 @@ function animateNumber(el, to, { duration = 1500, decimals = 0, prefix = '', gro
 function showToast(message) {
   const wrap = $('#toasts');
   if (!wrap) return;
+  wrap.replaceChildren();
   const toast = document.createElement('div');
   toast.className = 'toast';
+  toast.setAttribute('role', 'status');
   toast.textContent = message;
   wrap.appendChild(toast);
   requestAnimationFrame(() => toast.classList.add('is-show'));
@@ -412,15 +414,20 @@ function initHorizontal() {
   if (!wrap || !track) return;
 
   const update = () => {
-    if (window.innerWidth < 900) {          // on phones the track scrolls by touch instead
+    if (window.innerWidth < 769) {          // stacked layout matches the 768px CSS
       track.style.transform = '';
       return;
     }
     const rect = wrap.getBoundingClientRect();
     const scrollable = wrap.offsetHeight - window.innerHeight;
+    if (scrollable <= 0) {
+      track.style.transform = '';
+      return;
+    }
     const progress = clamp(-rect.top / scrollable, 0, 1);
-    const maxX = track.scrollWidth - window.innerWidth;
-    track.style.transform = `translate3d(${-progress * Math.max(maxX, 0)}px, 0, 0)`;
+    const viewport = (track.parentElement && track.parentElement.clientWidth) || window.innerWidth;
+    const maxX = Math.max(0, track.scrollWidth - viewport);
+    track.style.transform = `translate3d(${-progress * maxX}px, 0, 0)`;
   };
 
   window.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
