@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Ccircle cx='24' cy='24' r='22' fill='%230a1410' stroke='%23d4af37' stroke-width='2'/%3E%3Cpath d='M16 32V16l8 8 8-8v16' fill='none' stroke='%23d4af37' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
-  <link rel="stylesheet" href="style.css?v=4" />
+  <link rel="stylesheet" href="style.css?v=5" />
 </head>
 
 <body class="is-loading">
@@ -51,13 +51,13 @@
     </a>
 
     <nav class="nav-links" aria-label="Main navigation">
-      <a class="nav-link" href="#heritage">Heritage</a>
-      <a class="nav-link" href="#course">The Course</a>
-      <a class="nav-link" href="#experiences">Experiences</a>
-      <a class="nav-link" href="#membership">Membership</a>
-      <a class="nav-link" href="#shop">Pro Shop</a>
-      <a class="nav-link" href="#gallery">Gallery</a>
-      <a class="nav-link" href="#contact">Contact</a>
+      <a class="nav-link" href="#heritage"><span class="nav-link__label">Heritage</span></a>
+      <a class="nav-link" href="#course"><span class="nav-link__label">The Course</span></a>
+      <a class="nav-link" href="#experiences"><span class="nav-link__label">Experiences</span></a>
+      <a class="nav-link" href="#membership"><span class="nav-link__label">Membership</span></a>
+      <a class="nav-link" href="#shop"><span class="nav-link__label">Pro Shop</span></a>
+      <a class="nav-link" href="#gallery"><span class="nav-link__label">Gallery</span></a>
+      <a class="nav-link" href="#contact"><span class="nav-link__label">Contact</span></a>
     </nav>
 
     <div class="nav-actions">
@@ -97,7 +97,7 @@
       <div class="mist" aria-hidden="true"></div>
       <div class="mist mist--2" aria-hidden="true"></div>
       <div class="particles" id="particles" aria-hidden="true"></div>
-      <div class="hero__ball" aria-hidden="true"></div>
+      <div class="hero__ball" id="heroBall" aria-hidden="true"></div>
 
       <div class="container hero__content">
         <p class="hero__eyebrow eyebrow">Private Members’ Club · Est.&nbsp;1928</p>
@@ -167,7 +167,7 @@
         <div class="course-explorer" data-reveal="fade-up">
           <div class="hole-nav" id="holeNav" role="tablist" aria-label="Select a hole"></div>
           <article class="hole-panel glass" id="holePanel">
-            <div class="hole-panel__media">
+            <div class="hole-panel__media" data-parallax="7">
               <img class="img-lux hole-photo" id="holeImage" src="https://images.unsplash.com/photo-1592919505780-303950717480?auto=format&amp;fit=crop&amp;w=1400&amp;q=80" alt="Fairway view of the selected hole" width="1400" height="800" />
             </div>
             <div class="hole-panel__copy">
@@ -631,7 +631,7 @@
               <p class="eyebrow">Hours</p>
               <p>First light until last light, seven days.</p>
             </div>
-            <div class="map-wrap">
+            <div class="map-wrap" data-parallax="5">
               <iframe
                 title="Map of FAIRWAY ROYALE in DHA Phase 9, Lahore"
                 src="https://maps.google.com/maps?q=DHA%20Phase%209%2C%20Lahore%2C%20Pakistan&amp;z=15&amp;output=embed"
@@ -706,6 +706,6 @@
   <!-- Toasts -->
   <div class="toasts" id="toasts" aria-live="polite"></div>
 
-  <script src="script.js?v=4"></script>
+  <script src="script.js?v=5"></script>
 </body>
 </html>

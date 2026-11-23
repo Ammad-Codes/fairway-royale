@@ -193,6 +193,9 @@ button:active,
 .back-to-top:active {
   transform: scale(0.97);
 }
+.btn:active {
+  box-shadow: inset 0 3px 8px rgba(10, 20, 16, 0.35), 0 1px 2px rgba(10, 20, 16, 0.18);
+}
 
 .btn--shimmer::after {
   content: "";
@@ -487,7 +490,7 @@ body.has-cursor .cursor-ring { opacity: 1; }
   font-weight: 600;
 }
 
-.nav-links { display: flex; align-items: center; gap: 22px; }
+.nav-links { display: flex; align-items: center; gap: 22px; perspective: 400px; }
 .nav-link {
   position: relative;
   padding: 6px 0;
@@ -495,6 +498,21 @@ body.has-cursor .cursor-ring { opacity: 1; }
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--text);
+  display: inline-block;
+  perspective: 400px;
+}
+.nav-link__label {
+  display: inline-block;
+  transform: translateZ(0);
+  transition: transform 0.35s ease, color 0.3s ease;
+  transform-style: preserve-3d;
+}
+@media (hover: hover) and (pointer: fine) {
+  .nav-link:hover .nav-link__label,
+  .nav-link:focus-visible .nav-link__label {
+    transform: translateY(-2px) rotateX(14deg) translateZ(8px);
+    color: var(--gold);
+  }
 }
 .nav-link::after {                 /* animated gold underline from centre */
   content: "";
@@ -676,16 +694,29 @@ body.is-ready .mask {
 
 .hero__ball {
   position: absolute;
-  right: 8%;
-  bottom: 18%;
-  width: 70px;
-  height: 70px;
+  right: 5%;
+  bottom: 12%;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   background:
     radial-gradient(circle at 30% 28%, #fff, #f5e1a4 42%, #b8892b 100%);
   box-shadow: 0 20px 40px rgba(0,0,0,0.35);
   z-index: 2;
+  pointer-events: none;
   animation: ballBob 5s ease-in-out infinite;
+}
+.hero__ball.is-3d {
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  animation: none;
+  overflow: visible;
+}
+.hero__ball canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 @keyframes ballBob {
   0%, 100% { transform: translateY(0); }
@@ -1207,8 +1238,13 @@ body.is-ready .mask {
   object-fit: cover;
   transition: transform 0.6s ease, filter 0.6s ease;
 }
+.gallery-grid { perspective: 1200px; }
+.g-item { perspective: 900px; transform-style: preserve-3d; }
 .g-item:hover img,
-.g-item:focus-visible img { transform: scale(1.06); filter: brightness(0.85); }
+.g-item:focus-visible img {
+  transform: scale(1.07) rotateY(-7deg) translateZ(14px);
+  filter: brightness(0.85);
+}
 
 .lightbox {
   position: fixed;
@@ -1221,7 +1257,18 @@ body.is-ready .mask {
   background: rgba(10, 20, 16, 0.92);
 }
 .lightbox[hidden] { display: none; }
-.lightbox figure { margin: 0; max-width: min(1100px, 100%); text-align: center; }
+.lightbox figure {
+  margin: 0;
+  max-width: min(1100px, 100%);
+  text-align: center;
+  transform: perspective(1200px) rotateX(8deg) translateZ(-32px);
+  opacity: 0;
+  transition: transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s ease;
+}
+.lightbox figure.is-in {
+  transform: none;
+  opacity: 1;
+}
 .lightbox img { max-height: 72vh; width: auto; max-width: 100%; margin: 0 auto; border-radius: 16px; }
 .lightbox figcaption { margin-top: 12px; color: var(--sand); }
 .lb-close { position: absolute; top: 20px; right: 20px; }
@@ -1318,7 +1365,7 @@ body.is-ready .mask {
 }
 .footer__links a:hover { color: var(--gold); }
 
-.footer__social { display: flex; flex-wrap: wrap; gap: 12px; }
+.footer__social { display: flex; flex-wrap: wrap; gap: 12px; perspective: 480px; }
 .footer__social a {
   width: 44px;
   height: 44px;
@@ -1331,13 +1378,26 @@ body.is-ready .mask {
   justify-content: center;
   overflow: hidden;
   position: relative;
+  perspective: 480px;
   transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
 }
-.footer__social a svg { width: 18px; height: 18px; display: block; }
+.footer__social a svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+  transform: translateZ(0);
+  transition: transform 0.35s ease;
+}
 .footer__social a:hover,
 .footer__social a:focus-visible {
   background: var(--gold);
   color: var(--forest);
+}
+@media (hover: hover) and (pointer: fine) {
+  .footer__social a:hover svg,
+  .footer__social a:focus-visible svg {
+    transform: translateY(-2px) rotateX(16deg) translateZ(8px);
+  }
 }
 .copyright {
   width: min(1200px, 92%);
@@ -1420,10 +1480,30 @@ body.is-ready .mask {
   opacity: 0;
   transform: translateY(28px);
   transition: opacity 0.8s ease, transform 0.8s ease;
+  transform-style: preserve-3d;
 }
 [data-reveal="fade-left"] { transform: translateX(36px); }
 [data-reveal="fade-right"] { transform: translateX(-36px); }
 [data-reveal].is-in { opacity: 1; transform: none; }
+@media (min-width: 769px) {
+  .section .container,
+  .heritage__grid,
+  .booking__grid,
+  .hcp-wrap,
+  .tiers,
+  .shop-grid,
+  .gallery-grid,
+  .lounge-grid,
+  .contact-grid,
+  .event-list { perspective: 1400px; }
+  [data-reveal] {
+    transform: translateY(40px) rotateX(10deg) translateZ(-40px);
+    transform-origin: 50% 90%;
+  }
+  [data-reveal="fade-left"] { transform: translateX(40px) rotateY(-8deg) translateZ(-28px); transform-origin: 0% 50%; }
+  [data-reveal="fade-right"] { transform: translateX(-40px) rotateY(8deg) translateZ(-28px); transform-origin: 100% 50%; }
+  [data-reveal].is-in { opacity: 1; transform: none; }
+}
 .section-title { overflow: visible; }
 .section-title.shine-title { padding: 0.08em 0.12em 0.12em 0; }
 .split-word {
@@ -1466,7 +1546,7 @@ body.is-ready .mask {
   .navbar { padding: 10px 4%; }
   .navbar .btn--sm { display: none; }
   .hero { min-height: 560px; }
-  .hero__ball { width: 48px; height: 48px; right: 6%; }
+  .hero__ball { width: 110px; height: 110px; right: 3%; bottom: 14%; }
   .scroll-line { display: none; }
   .experiences-wrap { height: auto; }
   .exp-sticky { position: static; height: auto; padding: 80px 0; }
@@ -1819,5 +1899,56 @@ img.img-lux.is-loaded {
     transform: none !important;
     clip-path: none !important;
     filter: none !important;
+  }
+}
+
+
+/* ---------- 25. SITE-WIDE 3D ---------- */
+.tier,
+.product,
+.exp-card,
+.event,
+.conditions,
+.lounge-copy,
+.hole-panel,
+.booking__form,
+.booking__summary,
+.gauge-box,
+.hcp-form,
+.contact-form,
+.review {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+@media (hover: hover) and (pointer: fine) {
+  .is-tilting { will-change: transform; }
+}
+
+@media (max-width: 768px), (hover: none), (pointer: coarse) {
+  .tier,
+  .product,
+  .exp-card,
+  .event,
+  .conditions,
+  .lounge-copy,
+  .hole-panel,
+  .booking__form,
+  .booking__summary,
+  .gauge-box,
+  .hcp-form,
+  .contact-form,
+  .review { transform: none !important; }
+  .g-item:hover img,
+  .g-item:focus-visible img { transform: scale(1.04); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__ball.is-3d { display: none; }
+  .nav-link__label,
+  .footer__social a svg,
+  .lightbox figure,
+  .g-item img {
+    transform: none !important;
+    transition: none !important;
   }
 }

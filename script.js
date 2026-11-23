@@ -701,8 +701,14 @@ function initGallery() {
     if (caption) caption.textContent = item.dataset.caption || img.alt;
     lightbox.hidden = false;
     document.body.style.overflow = 'hidden';
+    const figure = lightbox.querySelector('figure');
+    if (figure) {
+      figure.classList.remove('is-in');
+      requestAnimationFrame(() => figure.classList.add('is-in'));
+    }
   };
   const close = () => {
+    lightbox.querySelector('figure')?.classList.remove('is-in');
     lightbox.hidden = true;
     document.body.style.overflow = '';
   };
@@ -921,22 +927,68 @@ function initSectionDots() {
 }
 
 function initCardSpotlight() {
-  if (!canHover || prefersReduced) return;
-  $$('.tier, .product, .exp-card, .conditions, .lounge-copy').forEach((card) => {
-    card.addEventListener('mousemove', (event) => {
-      const rect = card.getBoundingClientRect();
-      const x = ((event.clientX - rect.left) / rect.width) * 100;
-      const y = ((event.clientY - rect.top) / rect.height) * 100;
-      card.style.setProperty('--spot-x', `${x}%`);
-      card.style.setProperty('--spot-y', `${y}%`);
-      if (card.classList.contains('tier') && window.innerWidth >= 768) {
-        const rx = ((event.clientY - rect.top) / rect.height - 0.5) * -6;
-        const ry = ((event.clientX - rect.left) / rect.width - 0.5) * 6;
-        card.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+  if (!fineDesktop() || prefersReduced) return;
+  const items = $$('.tier, .product, .exp-card, .event, .conditions, .lounge-copy, .hole-panel, .booking__form, .booking__summary, .gauge-box, .hcp-form, .contact-form, .review').map((card) => {
+    const strong = /tier|product|exp-card/.test(card.className);
+    const state = { card, strong, tx: 0, ty: 0, tz: 0, cx: 0, cy: 0, cz: 0 };
+    return state;
+  });
+  if (!items.length) return;
+
+  let running = false;
+  const tick = () => {
+    if (!fineDesktop()) {
+      running = false;
+      items.forEach((s) => {
+        s.card.style.transform = '';
+        s.card.classList.remove('is-tilting');
+      });
+      return;
+    }
+    let busy = false;
+    items.forEach((s) => {
+      s.cx += (s.tx - s.cx) * 0.16;
+      s.cy += (s.ty - s.cy) * 0.16;
+      s.cz += (s.tz - s.cz) * 0.16;
+      const live = Math.abs(s.cx) + Math.abs(s.cy) + Math.abs(s.cz) > 0.04;
+      if (live) {
+        busy = true;
+        s.card.classList.add('is-tilting');
+        s.card.style.transform = `rotateX(${s.cx.toFixed(3)}deg) rotateY(${s.cy.toFixed(3)}deg) translateZ(${s.cz.toFixed(2)}px)`;
+      } else if (s.card.style.transform) {
+        s.card.style.transform = '';
+        s.card.classList.remove('is-tilting');
       }
     });
-    card.addEventListener('mouseleave', () => {
-      card.style.transform = '';
+    if (busy) requestAnimationFrame(tick);
+    else running = false;
+  };
+  const kick = () => {
+    if (!running) {
+      running = true;
+      requestAnimationFrame(tick);
+    }
+  };
+
+  items.forEach((state) => {
+    const max = state.strong ? 9 : 6;
+    state.card.addEventListener('mousemove', (event) => {
+      const rect = state.card.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      const px = (event.clientX - rect.left) / rect.width;
+      const py = (event.clientY - rect.top) / rect.height;
+      state.tx = (py - 0.5) * -max;
+      state.ty = (px - 0.5) * max;
+      state.tz = 16;
+      state.card.style.setProperty('--spot-x', `${px * 100}%`);
+      state.card.style.setProperty('--spot-y', `${py * 100}%`);
+      kick();
+    });
+    state.card.addEventListener('mouseleave', () => {
+      state.tx = 0;
+      state.ty = 0;
+      state.tz = 0;
+      kick();
     });
   });
 }
@@ -959,7 +1011,9 @@ function initParallax() {
       if (rect.bottom < 0 || rect.top > window.innerHeight) return;
       const amount = Number(el.dataset.parallax) || 8;
       const offset = (rect.top - window.innerHeight / 2) * (amount / 120);
-      el.style.transform = `translate3d(0, ${offset}px, 0)`;
+      const mid = (rect.top + rect.height / 2 - window.innerHeight / 2) / window.innerHeight;
+      const tilt = mid * -5 * (amount / 8);
+      el.style.transform = `translate3d(0, ${offset}px, 0) rotateX(${tilt}deg)`;
     });
     requestAnimationFrame(tick);
   };
@@ -968,6 +1022,169 @@ function initParallax() {
   };
   window.addEventListener('resize', ensure, { passive: true });
   ensure();
+}
+
+
+function makeDimpledBall(THREE, radius, wSeg, hSeg, dimpleCount) {
+  const geo = new THREE.SphereGeometry(radius, wSeg, hSeg);
+  const pos = geo.attributes.position;
+  const dimples = [];
+  const golden = Math.PI * (3 - Math.sqrt(5));
+  for (let i = 0; i < dimpleCount; i += 1) {
+    const y = 1 - (i / Math.max(dimpleCount - 1, 1)) * 2;
+    const radiusAt = Math.sqrt(Math.max(0, 1 - y * y));
+    const theta = golden * i;
+    dimples.push(new THREE.Vector3(Math.cos(theta) * radiusAt, y, Math.sin(theta) * radiusAt).multiplyScalar(radius));
+  }
+  const v = new THREE.Vector3();
+  const n = new THREE.Vector3();
+  const depth = radius * 0.048;
+  const width = radius * 0.13;
+  for (let i = 0; i < pos.count; i += 1) {
+    v.fromBufferAttribute(pos, i);
+    for (let d = 0; d < dimples.length; d += 1) {
+      const dist = v.distanceTo(dimples[d]);
+      if (dist < width) {
+        const t = 1 - dist / width;
+        n.copy(v).normalize();
+        v.addScaledVector(n, -depth * t * t);
+      }
+    }
+    pos.setXYZ(i, v.x, v.y, v.z);
+  }
+  pos.needsUpdate = true;
+  geo.computeVertexNormals();
+  return geo;
+}
+
+function buildHeroBall(host, THREE) {
+  const size = () => ({ w: Math.max(1, host.clientWidth), h: Math.max(1, host.clientHeight) });
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance' });
+  const first = size();
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
+  renderer.setSize(first.w, first.h);
+  renderer.setClearColor(0x000000, 0);
+  if ('outputEncoding' in renderer && THREE.sRGBEncoding !== undefined) {
+    renderer.outputEncoding = THREE.sRGBEncoding;
+  }
+  host.appendChild(renderer.domElement);
+  host.classList.add('is-3d');
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(32, first.w / first.h, 0.1, 20);
+  camera.position.set(0, 0.12, 4.15);
+
+  const ball = new THREE.Mesh(
+    makeDimpledBall(THREE, 1, 80, 64, 140),
+    new THREE.MeshPhysicalMaterial({
+      color: 0xf4f1ea,
+      roughness: 0.32,
+      metalness: 0.04,
+      clearcoat: 0.55,
+      clearcoatRoughness: 0.28,
+    })
+  );
+  scene.add(ball);
+  scene.add(new THREE.HemisphereLight(0xffe7c2, 0x163528, 0.95));
+  const key = new THREE.DirectionalLight(0xfff3d6, 1.25);
+  key.position.set(3.2, 2.4, 2.8);
+  scene.add(key);
+  const rim = new THREE.DirectionalLight(0xd4af37, 0.35);
+  rim.position.set(-3, 1.2, -1.4);
+  scene.add(rim);
+  const fill = new THREE.PointLight(0xf5e1a4, 0.4, 8);
+  fill.position.set(-1.4, -0.4, 3);
+  scene.add(fill);
+
+  let mx = 0;
+  let my = 0;
+  if (fineDesktop()) {
+    window.addEventListener('mousemove', (event) => {
+      const r = host.getBoundingClientRect();
+      mx = ((event.clientX - (r.left + r.width / 2)) / Math.max(r.width, 1)) * 0.35;
+      my = ((event.clientY - (r.top + r.height / 2)) / Math.max(r.height, 1)) * 0.2;
+    }, { passive: true });
+  }
+
+  const resize = () => {
+    const { w, h } = size();
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+  };
+  window.addEventListener('resize', resize, { passive: true });
+
+  let running = false;
+  let visible = true;
+  const io = new IntersectionObserver((entries) => {
+    visible = entries.some((entry) => entry.isIntersecting);
+    if (visible) ensure();
+  }, { threshold: 0.05 });
+  io.observe(host.closest('.hero') || host);
+
+  let t = 0;
+  let last = performance.now();
+  let frames = 0;
+  const tick = (now) => {
+    if (!running) return;
+    if (document.hidden || !visible) {
+      running = false;
+      return;
+    }
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    t += dt;
+    ball.rotation.y = t * 0.35;
+    ball.rotation.x = Math.sin(t * 0.7) * 0.12 + my * 0.5;
+    ball.rotation.z = mx * 0.4;
+    ball.position.y = Math.sin(t * 0.9) * 0.08;
+    renderer.render(scene, camera);
+    frames += 1;
+    // Touch / narrow views: draw a short spin, then hold a still frame.
+    if (!fineDesktop() && frames > 36) {
+      running = false;
+      return;
+    }
+    requestAnimationFrame(tick);
+  };
+  const ensure = () => {
+    if (running || document.hidden || !visible) return;
+    running = true;
+    last = performance.now();
+    requestAnimationFrame(tick);
+  };
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) ensure();
+  });
+  renderer.render(scene, camera);
+  ensure();
+}
+
+function initHeroBall3d() {
+  const host = $('#heroBall') || $('.hero__ball');
+  if (!host || prefersReduced) return;
+  const canvasProbe = document.createElement('canvas');
+  if (!canvasProbe.getContext || !canvasProbe.getContext('webgl')) return;
+
+  const start = () => {
+    if (!window.THREE) return;
+    try {
+      buildHeroBall(host, window.THREE);
+    } catch (err) {
+      host.classList.remove('is-3d');
+    }
+  };
+
+  if (window.THREE) {
+    start();
+    return;
+  }
+  const script = document.createElement('script');
+  script.src = 'vendor/three.min.js';
+  script.async = true;
+  script.onload = start;
+  script.onerror = () => {};
+  document.head.appendChild(script);
 }
 
 /* ---------- START ---------- */
@@ -996,6 +1213,7 @@ function init() {
   initContact();
   initBackToTop();
   initHeroVideo();
+  initHeroBall3d();
   initBlurUp();
   initCtaSparks();
   initCursorTrail();
