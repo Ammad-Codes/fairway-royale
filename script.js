@@ -21,18 +21,25 @@ const IMG = {
   green: 'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&fit=crop&w=1400&q=80',
 };
 
-const formatNumber = (n, decimals = 0) =>
-  n.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+const formatNumber = (n, decimals = 0, grouping = true) =>
+  n.toLocaleString('en-US', {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+    useGrouping: grouping,
+  });
+const fineDesktop = () =>
+  window.matchMedia('(hover: hover) and (pointer: fine)').matches && window.innerWidth >= 900;
 
 /**
  * Animates a number inside an element from its last value (stored in data-value)
  * to a new target. Respects reduced motion.
  */
-function animateNumber(el, to, { duration = 1500, decimals = 0, prefix = '' } = {}) {
-  const from = parseFloat(el.dataset.value) || 0;
+function animateNumber(el, to, { duration = 1500, decimals = 0, prefix = '', grouping } = {}) {
+  const useGroup = grouping ?? (prefix === '$');
+  const from = parseFloat(String(el.dataset.value || '').replace(/[^0-9.-]/g, '')) || 0;
   if (prefersReduced) {
     el.dataset.value = to;
-    el.textContent = prefix + formatNumber(to, decimals);
+    el.textContent = prefix + formatNumber(to, decimals, useGroup);
     return;
   }
   const start = performance.now();
@@ -40,11 +47,12 @@ function animateNumber(el, to, { duration = 1500, decimals = 0, prefix = '' } = 
     const t = clamp((now - start) / duration, 0, 1);
     const eased = 1 - Math.pow(1 - t, 3);            // ease-out cubic
     const value = from + (to - from) * eased;
-    el.textContent = prefix + formatNumber(value, decimals);
+    el.textContent = prefix + formatNumber(value, decimals, useGroup);
     if (t < 1) {
       requestAnimationFrame(step);
     } else {
       el.dataset.value = to;
+      el.textContent = prefix + formatNumber(to, decimals, useGroup);
     }
   };
   requestAnimationFrame(step);
@@ -173,10 +181,10 @@ function initCursor() {
   const dot = $('#cursorDot');
   const ring = $('#cursorRing');
   const label = $('#cursorLabel');
-  if (!dot || !ring || !canHover) return;
+  if (!dot || !ring || !fineDesktop()) return;
   document.body.classList.add('has-cursor');
 
-  let x = 0, y = 0, rx = 0, ry = 0;
+  let x = 0, y = 0, rx = 0, ry = 0, running = true;
   window.addEventListener('mousemove', (event) => {
     x = event.clientX;
     y = event.clientY;
@@ -184,12 +192,25 @@ function initCursor() {
   }, { passive: true });
 
   const follow = () => {
+    if (!running) return;
+    if (!fineDesktop()) {
+      running = false;
+      document.body.classList.remove('has-cursor');
+      return;
+    }
     rx += (x - rx) * 0.18;
     ry += (y - ry) * 0.18;
     ring.style.transform = `translate(${rx}px, ${ry}px)`;
     requestAnimationFrame(follow);
   };
   follow();
+  window.addEventListener('resize', () => {
+    if (fineDesktop() && !running) {
+      running = true;
+      document.body.classList.add('has-cursor');
+      follow();
+    }
+  }, { passive: true });
 
   $$('a, button').forEach((el) => {
     el.addEventListener('mouseenter', () => {
@@ -289,19 +310,24 @@ function initReveals() {
         io.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+  }, { threshold: 0.05, rootMargin: '0px 0px 12% 0px' });
 
-  [...items, ...more].forEach((el) => {
+  const all = [...items, ...more];
+  all.forEach((el) => {
     const rect = el.getBoundingClientRect();
-    if (rect.top < window.innerHeight * 0.9) show(el);
+    if (rect.top < window.innerHeight * 0.96) show(el);
     else io.observe(el);
-    // Failsafe so nothing stays invisible if it was already on screen
-    setTimeout(() => {
-      if (!el.classList.contains('is-in') && el.getBoundingClientRect().top < window.innerHeight) {
+  });
+  const failsafe = () => {
+    all.forEach((el) => {
+      if (!el.classList.contains('is-in') && el.getBoundingClientRect().top < window.innerHeight + 40) {
         show(el);
       }
-    }, 1800);
-  });
+    });
+  };
+  setTimeout(failsafe, 800);
+  setTimeout(failsafe, 2200);
+  window.addEventListener('scroll', failsafe, { passive: true });
 }
 
 function initCounters() {
@@ -321,16 +347,26 @@ function initCounters() {
       wrap.style.setProperty('--ring-off', String(Math.round(201 * (1 - progress))));
     }
   });
+  const run = (el) => {
+    if (el.dataset.counted === '1') return;
+    el.dataset.counted = '1';
+    animateNumber(el, Number(el.dataset.count), { duration: 1600, decimals: 0, grouping: false });
+    el.closest('.stat')?.classList.add('is-in');
+  };
   const io = new IntersectionObserver((entries, observer) => {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
-      const el = entry.target;
-      animateNumber(el, Number(el.dataset.count), { duration: 1600, decimals: 0 });
-      el.closest('.stat')?.classList.add('is-in');
-      observer.unobserve(el);
+      run(entry.target);
+      observer.unobserve(entry.target);
     });
-  }, { threshold: 0.5 });
-  stats.forEach((el) => io.observe(el));
+  }, { threshold: 0.2, rootMargin: '0px 0px 10% 0px' });
+  stats.forEach((el) => {
+    if (el.getBoundingClientRect().top < window.innerHeight * 0.95) run(el);
+    else io.observe(el);
+    setTimeout(() => {
+      if (el.dataset.counted !== '1' && el.getBoundingClientRect().top < window.innerHeight) run(el);
+    }, 2000);
+  });
 }
 
 function initParticles() {
@@ -610,8 +646,10 @@ function initHandicap() {
 function initMembership() {
   const toggle = $('#billingToggle');
   if (!toggle) return;
+  const billing = toggle.closest('.billing');
   const apply = (annual) => {
     toggle.setAttribute('aria-checked', annual ? 'true' : 'false');
+    billing?.classList.toggle('is-annual', annual);
     $$('.tier__price span[data-price-month]').forEach((el) => {
       el.textContent = annual ? el.dataset.priceYear : el.dataset.priceMonth;
     });
@@ -619,6 +657,7 @@ function initMembership() {
       el.textContent = annual ? ' / yr' : ' / mo';
     });
   };
+  apply(false);
   toggle.addEventListener('click', () => {
     apply(toggle.getAttribute('aria-checked') !== 'true');
   });
@@ -806,9 +845,9 @@ function initBlurUp() {
 }
 
 function initCtaSparks() {
-  if (prefersReduced) return;
+  if (prefersReduced || window.innerWidth < 768) return;
   $$('.cta-sparkle').forEach((section) => {
-    for (let i = 0; i < 10; i += 1) {
+    for (let i = 0; i < 6; i += 1) {
       const spark = document.createElement('span');
       spark.className = 'spark';
       spark.style.setProperty('--x', `${8 + Math.random() * 84}%`);
@@ -822,7 +861,7 @@ function initCtaSparks() {
 
 function initCursorTrail() {
   const wrap = $('#cursorTrail');
-  if (!wrap || !canHover || prefersReduced) return;
+  if (!wrap || !fineDesktop() || prefersReduced) return;
   const dots = Array.from({ length: 8 }, () => {
     const el = document.createElement('i');
     wrap.appendChild(el);
@@ -830,11 +869,18 @@ function initCursorTrail() {
   });
   let x = 0;
   let y = 0;
+  let running = true;
   window.addEventListener('mousemove', (event) => {
     x = event.clientX;
     y = event.clientY;
   }, { passive: true });
   const tick = () => {
+    if (!running) return;
+    if (!fineDesktop()) {
+      running = false;
+      dots.forEach((dot) => { dot.el.style.opacity = '0'; });
+      return;
+    }
     let px = x;
     let py = y;
     dots.forEach((dot, i) => {
@@ -899,13 +945,16 @@ function initParallax() {
   const layers = $$('[data-parallax]');
   if (!layers.length || prefersReduced) return;
   let current = window.scrollY;
+  let running = false;
   const tick = () => {
+    if (window.innerWidth < 768) {
+      running = false;
+      layers.forEach((el) => { el.style.transform = ''; });
+      return;
+    }
+    running = true;
     current += (window.scrollY - current) * 0.12;   // smoothed inertia for effects
     layers.forEach((el) => {
-      if (window.innerWidth < 768) {
-        el.style.transform = '';
-        return;
-      }
       const rect = el.getBoundingClientRect();
       if (rect.bottom < 0 || rect.top > window.innerHeight) return;
       const amount = Number(el.dataset.parallax) || 8;
@@ -914,7 +963,11 @@ function initParallax() {
     });
     requestAnimationFrame(tick);
   };
-  tick();
+  const ensure = () => {
+    if (window.innerWidth >= 768 && !running) tick();
+  };
+  window.addEventListener('resize', ensure, { passive: true });
+  ensure();
 }
 
 /* ---------- START ---------- */
